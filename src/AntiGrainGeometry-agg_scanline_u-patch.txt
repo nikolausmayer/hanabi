@@ -1,0 +1,14 @@
+473c473
+<             base_type::finalize(span_y);
+---
+>             ((base_type*)(this))->finalize(span_y);
+476,477c476,477
+<                 typename base_type::iterator span = base_type::begin();
+<                 unsigned count = base_type::num_spans();
+---
+>                 typename base_type::iterator span = ((base_type*)(this))->begin();
+>                 unsigned count = ((base_type*)(this))->num_spans();
+481c481
+<                                                 base_type::y(), 
+---
+>                                                 ((base_type*)(this))->y(), 

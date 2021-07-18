@@ -1,0 +1,4 @@
+1368c1368
+<         line_profile_aa& profile() { return *m_profile; }
+---
+>         const line_profile_aa& profile() { return *m_profile; }
