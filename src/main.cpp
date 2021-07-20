@@ -54,17 +54,18 @@ struct Layer {
   float diameter;
   float spacing;
   float angle;
+  float zoom;
   bool dirty;
 
   unsigned char* alphamask_buf;
   agg::path_storage paths;
 };
 Layer layers[] = {
-  {{200, 200, 255},  1.000, 6, 0, true, new unsigned char[W * H]},
-  {{255, 255,   0},  1.375, 6, 0, true, new unsigned char[W * H]},
-  {{255,   0,   0},  1.750, 6, 0, true, new unsigned char[W * H]},
-  {{  0,   0, 255},  2.125, 6, 0, true, new unsigned char[W * H]},
-  {{  0,   0,   0},  2.500, 6, 0, true, new unsigned char[W * H]},
+  {{160, 160, 255}, (1+0.375*0)*1.2, 6.4, 0, 1, true, new unsigned char[W * H], {}},
+  {{255, 255,   0}, (1+0.375*1)*1.2, 6.4, 0, 1, true, new unsigned char[W * H], {}},
+  {{255,   0,   0}, (1+0.375*2)*1.2, 6.4, 0, 1, true, new unsigned char[W * H], {}},
+  {{  0,   0, 255}, (1+0.375*3)*1.2, 6.4, 0, 1, true, new unsigned char[W * H], {}},
+  {{  0,   0,   0}, (1+0.375*4)*1.2, 6.4, 0, 1, true, new unsigned char[W * H], {}},
 };
 
 unsigned char* imgdata{nullptr};
@@ -72,7 +73,10 @@ Fl_RGB_Image* img{nullptr};
 Fl_Window* win{nullptr};
 Fl_Box* imgbox{nullptr};
 Fl_Box* labels[5] = {nullptr};
-Fl_Value_Slider* sliders[5] = {nullptr};
+Fl_Value_Slider* layer_sliders[5] = {nullptr};
+
+Fl_Box* zoom_label{nullptr};
+Fl_Value_Slider* zoom_slider{nullptr};
 
 unsigned char* canvas_buf{nullptr};
 
@@ -195,6 +199,7 @@ void Render()
       agg::trans_affine mtx;
       mtx *= agg::trans_affine_translation(-W/2, -H/2);
       mtx *= agg::trans_affine_rotation(layer.angle);
+      mtx *= agg::trans_affine_scaling(layer.zoom);
       mtx *= agg::trans_affine_translation(W/2, H/2);
       agg::conv_transform trans(layer.paths, mtx);
       rasterizer.add_path(trans);
@@ -234,12 +239,15 @@ void Render()
 }
 
 
-void Update(Fl_Widget *w)
+void Update(Fl_Widget*)
 {
-  for (std::size_t i = 0; i < std::size(sliders); ++i) {
-    if (const float angle = sliders[i]->value() * M_PI / 180; 
-        layers[i].angle != angle) {
+  const float zoom = zoom_slider->value();
+  for (std::size_t i = 0; i < std::size(layer_sliders); ++i) {
+    const float angle = layer_sliders[i]->value() * M_PI / 180;
+    if (layers[i].angle != angle or
+        layers[i].zoom  != zoom) {
       layers[i].angle = angle;
+      layers[i].zoom  = zoom;
       layers[i].dirty = true;
     }
   }
@@ -279,7 +287,7 @@ int main()
   imgbox->image(img);
   imgbox->show();
 
-  for (std::size_t i = 0; i < std::size(sliders); ++i) {
+  for (std::size_t i = 0; i < std::size(layer_sliders); ++i) {
     constexpr std::array colornames{"lightblue", "yellow", "red", "blue", "black"};
     Fl_Box* label = new Fl_Box(W, i*25, 70, 25, colornames[i]);
     //label->box(FL_UP_BOX);
@@ -296,8 +304,16 @@ int main()
     slider->value(0);
     slider->callback(Update);
     slider->show();
-    sliders[i] = slider;
+    layer_sliders[i] = slider;
   }
+
+  zoom_label = new Fl_Box(W, 175, 70, 25, "Zoom");
+  zoom_slider = new Fl_Value_Slider(W+70, 175, 330, 25);
+  zoom_slider->type(FL_HOR_NICE_SLIDER);
+  zoom_slider->bounds(1, 5);
+  zoom_slider->value(1);
+  zoom_slider->callback(Update);
+  zoom_slider->show();
 
   win->end();
   win->show();
