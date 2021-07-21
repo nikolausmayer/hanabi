@@ -11,7 +11,7 @@ CIMG_VERSION ?= 2.9.7
 FLTK_VERSION ?= 1.3.6
 
 ## Compiler flags; extended in 'debug'/'release' rules
-CXXFLAGS += -fPIC -W -Wall -Wextra -Wpedantic -std=c++20 -pthread -isystem src/agg-2.4/include -Dcimg_use_png -Dcimg_display=0 $(shell ./src/fltk-$(FLTK_VERSION)/install/bin/fltk-config --use-gl --cxxflags)
+CXXFLAGS += -fPIC -W -Wall -Wextra -Wpedantic -std=c++2a -pthread -isystem src/agg-2.4/include -Dcimg_use_png -Dcimg_display=0 $(shell ./src/fltk-$(FLTK_VERSION)/install/bin/fltk-config --use-gl --cxxflags)
 
 ## Linker flags
 LDFLAGS = -Lsrc/agg-2.4/src -pthread -lagg -lpng $(shell ./src/fltk-$(FLTK_VERSION)/install/bin/fltk-config --use-gl --ldflags)
