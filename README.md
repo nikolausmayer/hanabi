@@ -6,5 +6,5 @@ A C++ implementation of [Hanabi by Ryoichi Ogura](https://www.spoon-tamago.com/2
 Just run `hanabi` and have fun.
 
 # Building
-Just `make`. This pulls the dependencies [CImg](http://cimg.eu/), [AGG](http://www.antigrain.com/) and [FLTK](https://www.fltk.org/), so the first build takes a bit longer. Note that these third-party dependencies are *not* under this repository's license.
+Just `make`. This pulls the dependencies [CImg](http://cimg.eu/), [AGG](https://github.com/nikolausmayer/AntiGrainGeometry-v2.4) and [FLTK](https://www.fltk.org/), so the first build takes a bit longer. Note that these third-party dependencies are *not* under this repository's license.
 
